@@ -45,7 +45,9 @@ namespace SensorTagTest
             foreach (var keyInputDevice in serviceDeviceIds)
             {
                 // Access to Generic Attribute Profile service
-                var gapService = await GetOtherServiceAsync(keyInputDevice, GattServiceUuids.GenericAccess, cancellationToken);
+                var gapServiceDevices = await DeviceInformation.FindAllAsync(GattDeviceService.GetDeviceSelectorFromUuid(GattServiceUuids.GenericAccess));
+                var gapService = await GattDeviceService.FromIdAsync(gapServiceDevices.First().Id);
+                //var gapService = await GetOtherServiceAsync(keyInputDevice, GattServiceUuids.GenericAccess, cancellationToken);
                 var deviceName = gapService.GetCharacteristics(GattDeviceService.ConvertShortIdToUuid(0x2a00)).First();
                 var deviceNameValue = await deviceName.ReadValueAsync(BluetoothCacheMode.Uncached).AsTask(cancellationToken);
                 var decodedDeviceName = deviceNameValue.Value.DecodeUtf8String();
